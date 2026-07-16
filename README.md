@@ -1,10 +1,16 @@
-TEAM SINGKO
+# TEAM SINGKO
 
-Member
-Vasquez John Ley Lucky - Frontend/Logic
-Samontanez Charles D - Api Integration and Testing
-Javier Rhona Cristel D - Reoair some Issues/ Documentation
+## Members
+- Vasquez John Ley Lucky — Frontend / Logic
+- Samontanez Charles D — API Integration and Testing
+- Javier Rhona Cristel D — Repair issues / Documentation
 
-To lunch the system clone the repo then right click the index.html then click open with intregrated browser
+## How to launch
+1. Clone the repository.
+2. Open the project folder in your code editor.
+3. Right-click `index.html`.
+4. Choose **Open with Integrated Browser**.
+
+> If your editor does not have an integrated browser extension, you can also open `index.html` directly in your web browser.
 
 

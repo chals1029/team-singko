@@ -1,9 +1,13 @@
+// This is the API key that lets us request book data from Google Books.
 const API_KEY = 'AIzaSyD8WrncOWxM0cCrcgn21yrWVjjakiT7O98';
+
+// Select the important page elements we need to update later.
 const form = document.getElementById('search-form');
 const input = document.getElementById('search-input');
 const resultsGrid = document.getElementById('results-grid');
 const resultsStatus = document.getElementById('results-status');
 
+// Show a simple message when there are no search results.
 function renderEmptyState(message) {
   resultsGrid.innerHTML = `
     <div class="empty-state">
@@ -12,23 +16,28 @@ function renderEmptyState(message) {
   `;
 }
 
+// Build the book cards and attach a click handler for each one.
 function renderBooks(books) {
   if (!books.length) {
+    // If the API returns an empty list, show an empty message.
     renderEmptyState('No books found. Try another search.');
     return;
   }
 
   resultsGrid.innerHTML = books
     .map((book) => {
-      const info = book.volumeInfo || {};
+      const info = book.volumeInfo || {}; // Some books may not include volumeInfo.
       const title = info.title || 'Untitled';
       const authors = info.authors?.join(', ') || 'Unknown author';
       const category = info.categories?.slice(0, 2).join(' • ') || 'Literature';
       const thumbnail = info.imageLinks?.thumbnail || '';
-      const preview = info.description ? info.description.replace(/<[^>]+>/g, '').slice(0, 120) + '…' : 'Tap to view more details about this title.';
+      const preview = info.description
+        ? info.description.replace(/<[^>]+>/g, '').slice(0, 120) + '…'
+        : 'Tap to view more details about this title.';
       const previewText = preview.replace(/\s+/g, ' ').trim();
       const infoLink = book.infoLink || '#';
 
+      // Save book details in data attributes so the modal can use them later.
       return `
         <article class="card" data-title="${title}" data-authors="${authors}" data-category="${category}" data-description="${(info.description || 'No description available for this title.').replace(/"/g, '&quot;')}" data-thumbnail="${thumbnail}" data-link="${infoLink}">
           <div class="card-cover">
@@ -48,6 +57,7 @@ function renderBooks(books) {
     })
     .join('');
 
+  // Add event listeners after the cards are added to the page.
   resultsGrid.querySelectorAll('.card').forEach((card) => {
     card.addEventListener('click', () => {
       openBookModal(card.dataset);
@@ -55,6 +65,7 @@ function renderBooks(books) {
   });
 }
 
+// Open a modal dialog using the selected book's data.
 function openBookModal(book) {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
@@ -78,6 +89,7 @@ function openBookModal(book) {
 
   document.body.appendChild(modal);
 
+  // Close the modal if the backdrop or close button is clicked.
   modal.addEventListener('click', (event) => {
     if (event.target === modal || event.target.classList.contains('modal-close')) {
       modal.remove();
@@ -85,12 +97,14 @@ function openBookModal(book) {
   });
 }
 
+// Fetch book results from the Google Books API.
 async function searchBooks(query) {
   const response = await fetch(
     `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${API_KEY}`
   );
 
   if (!response.ok) {
+    // If the request fails, we throw so the calling code can handle it.
     throw new Error(`Request failed with status ${response.status}`);
   }
 
@@ -98,6 +112,7 @@ async function searchBooks(query) {
   return data.items || [];
 }
 
+// Load a few books at page load using a random query.
 async function loadRandomBook() {
   const randomQueries = ['fiction', 'science', 'inspiration', 'history', 'mystery'];
   const query = randomQueries[Math.floor(Math.random() * randomQueries.length)];
@@ -116,8 +131,10 @@ async function loadRandomBook() {
   }
 }
 
+// Start the page with some example books.
 loadRandomBook();
 
+// Handle the search form submission.
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 

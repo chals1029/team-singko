@@ -101,15 +101,16 @@ function renderBooks(books) {
   resultsGrid.innerHTML = books
     .map((book) => {
       const info = book.volumeInfo || {};
-      const title = info.title || 'Untitled';
-      const authors = info.authors?.join(', ') || 'Unknown author';
-      const category = info.categories?.slice(0, 2).join(' • ') || 'Literature';
-      const thumbnail = info.imageLinks?.thumbnail || '';
-      const preview = info.description
-        ? info.description.replace(/<[^>]+>/g, '').slice(0, 120) + '…'
+      const title = info.title || book.title || 'Untitled';
+      const authors = info.authors?.join(', ') || book.authors || 'Unknown author';
+      const category = info.categories?.slice(0, 2).join(' • ') || book.category || 'Literature';
+      const thumbnail = info.imageLinks?.thumbnail || book.thumbnail || '';
+      const rawDescription = info.description || book.description || '';
+      const preview = rawDescription
+        ? rawDescription.replace(/<[^>]+>/g, '').slice(0, 120) + '…'
         : 'Tap to view more details about this title.';
       const previewText = preview.replace(/\s+/g, ' ').trim();
-      const infoLink = book.infoLink || '#';
+      const infoLink = book.infoLink || book.link || '#';
       const key = `${title}|${authors}`;
       const isFavorite = favoriteBooks.has(key);
 
